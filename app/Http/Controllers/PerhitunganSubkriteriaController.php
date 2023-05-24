@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Alternatif;
 use App\Models\Kriteria;
+use App\Models\KriteriaValid;
 use App\Models\MatrixNilaiSubkriteria;
 use App\Models\NilaiPrioritasSubkriteria;
+use App\Models\Perhitungan;
 use App\Models\PerhitunganSubkriteria;
 use App\Models\SubKriteria;
 use App\Models\SubkriteriaValid;
@@ -128,10 +130,14 @@ class PerhitunganSubkriteriaController extends Controller
         $kriterias = Kriteria::get();
         $alternatifs = Alternatif::get();
         $nilai_prioritas_subkriterias = NilaiPrioritasSubkriteria::get();
+        $perhitungans_all = Perhitungan::get();
+        $is_valid = KriteriaValid::first();
         return view('pages.perhitungan_subkriteria.alternatif', [
             'kriterias' => $kriterias, 
             'alternatifs' => $alternatifs,
-            'nilai_prioritas_subkriterias' => $nilai_prioritas_subkriterias
+            'nilai_prioritas_subkriterias' => $nilai_prioritas_subkriterias,
+            'perhitungans_all' => $perhitungans_all,
+            'is_valid' => $is_valid
         ]);
     }
 }

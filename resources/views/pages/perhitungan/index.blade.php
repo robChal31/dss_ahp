@@ -6,12 +6,17 @@
            
             <div class="card col-12 p-4">
                 <h4 class="mb-4">Matrix Perbandingan</h4>
+
+                @if ((count($kriterias) * count($kriterias)) == count($perhitungans_all))
                     @if (($is_valid) && $is_valid->is_valid)
                         <p class="alert alert-success text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index valid</p>
                     @endif
+                    
                     @if (($is_valid) && !$is_valid->is_valid)
-                    <p class="alert alert-danger text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index tidak valid, silahkan input kembali</p>
+                        <p class="alert alert-danger text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index tidak valid, silahkan input kembali</p>
                     @endif
+                @endif
+
                 @if (count($kriterias))
                     <form method="post" action="/perhitungan/store">
                         @csrf
@@ -31,16 +36,25 @@
                                     <td class="fw-bold">{{$kriteria2->nama_kriteria}}</td>
                                 @foreach ($kriterias as $innerIndex => $kriteria3)
                                     <td>
-                                        <select name="{{$kriteria2->nama_kriteria . '[]'}}" class="form-select px-4 matrix_select" style="padding: 5px 20px" {{$innerIndex == $outerIndex ? 'disabled' : ''}} data-id="{{$innerIndex . ',' . $outerIndex}}">
-                                            @if (count($kriteria2->perhitungans))
-                                                @if ($kriteria2->perhitungans[$innerIndex])
-                                                    <option value="{{$kriteria2->perhitungans[$innerIndex]->nilai}}" data-dynamic="true">{{number_format($kriteria2->perhitungans[$innerIndex]->nilai, 2)}}</option>
+                                        @if ((count($kriterias) * count($kriterias)) != count($perhitungans_all))
+                                            <select name="{{$kriteria2->nama_kriteria . '[]'}}" class="form-select px-4 matrix_select" style="padding: 5px 20px" {{$innerIndex == $outerIndex ? 'disabled' : ''}} data-id="{{$innerIndex . ',' . $outerIndex}}">
+                                                @foreach (range(1,9) as $point)
+                                                    <option value="{{$point}}" >{{$point}}</option>
+                                                @endforeach
+                                            </select>
+                                        @else
+                                            <select name="{{$kriteria2->nama_kriteria . '[]'}}" class="form-select px-4 matrix_select" style="padding: 5px 20px" {{$innerIndex == $outerIndex ? 'disabled' : ''}} data-id="{{$innerIndex . ',' . $outerIndex}}">
+                                                @if (count($kriteria2->perhitungans))
+                                                    @if ($kriteria2->perhitungans[$innerIndex])
+                                                        <option value="{{$kriteria2->perhitungans[$innerIndex]->nilai}}" data-dynamic="true">{{number_format($kriteria2->perhitungans[$innerIndex]->nilai, 2)}}</option>
+                                                    @endif
                                                 @endif
-                                            @endif
-                                            @foreach (range(1,9) as $point)
-                                                <option value="{{$point}}" >{{$point}}</option>
-                                            @endforeach
-                                        </select>
+                                                @foreach (range(1,9) as $point)
+                                                    <option value="{{$point}}" >{{$point}}</option>
+                                                @endforeach
+                                            </select>
+                                        @endif
+                                        
                                     </td>
                                 @endforeach
                                 </tr>

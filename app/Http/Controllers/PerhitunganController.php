@@ -19,8 +19,12 @@ class PerhitunganController extends Controller
     {
         $kriterias = Kriteria::get();
         $is_valid = KriteriaValid::first();
-
-        return view('pages.perhitungan/index', ['kriterias' => $kriterias, 'is_valid' => $is_valid]);
+        $perhitungans_all = Perhitungan::get();
+        return view('pages.perhitungan/index', [
+            'kriterias' => $kriterias, 
+            'is_valid' => $is_valid, 
+            'perhitungans_all' => $perhitungans_all
+        ]);
     }
 
     /**
