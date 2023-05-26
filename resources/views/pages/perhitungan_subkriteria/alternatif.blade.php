@@ -43,14 +43,14 @@
                                     </tbody>
                                 </table>
                                 {{-- <input type="hidden" name="id_kriteria" id="" value="{{$kriteria->id}}"> --}}
-                                <div class="col-12 text-end">
+                                {{-- <div class="col-12 text-end">
                                     <a href="/perhitungan_subkriteria" class="btn btn-warning" >
                                         Kembali
                                     </a>
                                     <button type="submit" class="btn btn-primary" >
                                         Hitung Nilai
                                     </button>
-                                </div>
+                                </div> --}}
                             </form>
                         @endif
                     </div>
@@ -58,7 +58,7 @@
 
                 {{-- nilai akhir  --}}
         
-                <div class="row">
+                <div class="row mt-4">
                 
                     <div class="card col-12 p-4">
                         <h4 class="mb-4">Hitung Nilai Akhir</h4>

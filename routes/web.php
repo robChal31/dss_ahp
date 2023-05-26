@@ -19,6 +19,7 @@ use App\Http\Controllers\SubkriteriaController;
 |
 */
 
+Route::get('/', [KriteriaController::class, 'index']);
 Route::get('/kriteria', [KriteriaController::class, 'index']);
 
 Route::post('/kriteria/store', [KriteriaController::class, 'store']);
@@ -46,6 +47,7 @@ Route::delete('/siswa_detail/destroy', [AlternatifDetailController::class, 'dest
 
 Route::get('/perhitungan', [PerhitunganController::class, 'index']);
 Route::post('/perhitungan/store', [PerhitunganController::class, 'store']);
+Route::get('/perhitungan/hasil', [PerhitunganController::class, 'hasil']);
 Route::get('/perhitungan/edit', [PerhitunganController::class, 'edit']);
 Route::put('/perhitungan/update', [PerhitunganController::class, 'update']);
 Route::delete('/perhitungan/destroy', [PerhitunganController::class, 'destroy']);

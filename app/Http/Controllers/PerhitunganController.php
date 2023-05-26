@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\helpers\Formula;
 use App\Models\Kriteria;
 use App\Models\KriteriaValid;
 use App\Models\MatrixNilaiKriteria;
@@ -92,23 +93,7 @@ class PerhitunganController extends Controller
             $nilai_prioritas_kriteria->nilai_prioritas = $jml_nilai/count($kriterias);
             $nilai_prioritas_kriteria->save();
         }
-        $nilai_index_random = [
-            "1" => 0,
-            "2" => 0,
-            "3" => 0.58,
-            "4" => 0.90,
-            "5" => 1.12,
-            "6" => 1.24,
-            "7" => 1.32,
-            "8" => 1.41,
-            "9" => 1.45,
-            "10" => 1.49,
-            "11" => 1.51,
-            "12" => 1.48,
-            "13" => 1.56,
-            "14" => 1.57,
-            "15" => 1.59,
-        ];
+        $nilai_index_random = Formula::$nilai_index_random;
 
         $ci = ($maks_lamda - count($kriterias)) / (count($kriterias)-1);
         $cr = $ci/($nilai_index_random[count($kriterias)]);
@@ -119,12 +104,25 @@ class PerhitunganController extends Controller
         if($cr > 0.1) {
             $valid->is_valid = false;
             $valid->save();
-            return redirect('perhitungan')->with('error', 'Gagal hitung, nilai Consistensi Ratio ' . number_format($cr, 3) . ' dan Consistensi Index ' . number_format($ci, 3) . ', lebih besar dari 0,1 atau 10%');
+            return redirect('/perhitungan/hasil')->with('error', 'Gagal hitung, nilai Consistensi Ratio ' . number_format($cr, 3) . ' dan Consistensi Index ' . number_format($ci, 3) . ', lebih besar dari 0,1 atau 10%');
         }
 
         $valid->is_valid = true;
         $valid->save();
-        return redirect('perhitungan')->with('success', 'Berhasil hitung, nilai Consistensi Ratio ' . number_format($cr, 3) . ' dan Consistensi Index ' . number_format($ci, 3) . ', lebih besar dari 0,1 atau 10%');
+        return redirect('/perhitungan/hasil')->with('success', 'Berhasil hitung, nilai Consistensi Ratio ' . number_format($cr, 3) . ' dan Consistensi Index ' . number_format($ci, 3) . ', lebih besar dari 0,1 atau 10%');
+    }
+
+    public function hasil() {
+        $kriterias = Kriteria::get();
+        $is_valid = KriteriaValid::first();
+        $perhitungans_all = Perhitungan::get();
+        $nilai_index_random = (Formula::$nilai_index_random[count($kriterias)]);
+        return view('pages.perhitungan/hasil', [
+            'kriterias' => $kriterias, 
+            'is_valid' => $is_valid, 
+            'perhitungans_all' => $perhitungans_all,
+            'nilai_index_random' => $nilai_index_random
+        ]);
     }
 
     /**
