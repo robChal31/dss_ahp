@@ -5,14 +5,28 @@
             @if ((count($kriterias) * count($kriterias)) == count($perhitungans_all))
                 {{-- nilai alternatif  --}}
                 <div class="row">
-                    @if (($is_valid) && $is_valid->is_valid)
-                        <p class="alert alert-success text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index kriteria valid</p>
-                    @endif
-                    
-                    @if (($is_valid) && !$is_valid->is_valid)
-                        <p class="alert alert-danger text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index kriteria tidak valid, silahkan input kembali</p>
-                    @endif
                     <div class="card col-12 p-4">
+                        <div class="col-12">
+                            
+                            <div class="mb-2">
+                                @if (($is_valid) && $is_valid->is_valid)
+                                    <span class="alert alert-success text-white py-2" style="font-size: 11px">Nilai Consistensi Ratio dan Consistensi Index kriteria valid</span>
+                                @endif
+                                
+                                @if (($is_valid) && !$is_valid->is_valid)
+                                    <span class="alert alert-danger text-white py-2" style="font-size: 11px">Nilai Consistensi Ratio dan Consistensi Index kriteria tidak valid, silahkan input kembali</span>
+                                @endif
+                            
+                            
+                                @if ($is_subkriteria_valid)
+                                    <span class="alert alert-success text-white py-2" style="font-size: 11px">Nilai Consistensi Ratio dan Consistensi Index subkriteria valid</span>
+                                @else
+                                    <span class="alert alert-danger text-white py-2" style="font-size: 11px">Nilai Consistensi Ratio dan Consistensi Index subkriteria tidak valid, silahkan input kembali</span>
+                                @endif
+                            </div>
+                            
+                       </div>
+                           
                         <h4 class="mb-4">Nilai Alternatif</h4>
                             
                         @if (count($kriterias) && count($alternatifs))
@@ -42,15 +56,6 @@
                                     @endforeach
                                     </tbody>
                                 </table>
-                                {{-- <input type="hidden" name="id_kriteria" id="" value="{{$kriteria->id}}"> --}}
-                                {{-- <div class="col-12 text-end">
-                                    <a href="/perhitungan_subkriteria" class="btn btn-warning" >
-                                        Kembali
-                                    </a>
-                                    <button type="submit" class="btn btn-primary" >
-                                        Hitung Nilai
-                                    </button>
-                                </div> --}}
                             </form>
                         @endif
                     </div>
@@ -77,6 +82,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <?php $rank = array(); ?>
                                     @foreach ($alternatifs as $outerIndex => $alternatif)
                                         <tr class="text-center">
                                             <td class="fw-bold">{{$alternatif->nama}}</td>
@@ -90,8 +96,16 @@
                                                 <td>
                                                     {{number_format($nilai_prioritas_subkriteria->nilai_prioritas * $nilai_prioritas_kriteria, 2)}}
                                                 </td>
-                                                <?php $total += $nilai_prioritas_subkriteria->nilai_prioritas * $nilai_prioritas_kriteria;?>
+                                                <?php 
+                                                    $total += $nilai_prioritas_subkriteria->nilai_prioritas * $nilai_prioritas_kriteria;
+                                                ?>
                                             @endforeach
+                                            <?php  
+                                                array_push($rank, array([
+                                                    'alternatif_nama' => $alternatif->nama,
+                                                    'total' => $total
+                                                ])); 
+                                            ?>
                                             <td>{{number_format($total,2)}}</td>
                                         </tr>
                                     @endforeach
@@ -99,6 +113,14 @@
                                 </table>
                             </form>
                         @endif
+                        <?php
+                            usort($rank, function($a, $b) {
+                                return $b[0]['total'] <=> $a[0]['total'];
+                            });
+                        ?>
+                        <div class="col-12 mt-4">
+                            <h5 class="fw-bold text-center text-primary">Ranking 1 adalah {{$rank[0][0]['alternatif_nama']}} dengan total nilai {{number_format($rank[0][0]['total'], 2)}}</h5>
+                        </div>
                     </div>
                 </div>
         

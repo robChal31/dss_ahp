@@ -54,6 +54,7 @@ Route::delete('/perhitungan/destroy', [PerhitunganController::class, 'destroy'])
 
 Route::get('/perhitungan_subkriteria', [PerhitunganSubkriteriaController::class, 'index']);
 Route::get('/perhitungan_subkriteria/matrix', [PerhitunganSubkriteriaController::class, 'matrix']);
+Route::get('/perhitungan_subkriteria/hasil', [PerhitunganSubkriteriaController::class, 'hasil']);
 Route::get('/perhitungan_subkriteria/alternatif', [PerhitunganSubkriteriaController::class, 'alternatif']);
 Route::post('/perhitungan_subkriteria/store', [PerhitunganSubkriteriaController::class, 'store']);
 Route::get('/perhitungan_subkriteria/edit', [PerhitunganSubkriteriaController::class, 'edit']);

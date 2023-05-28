@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\helpers\Formula;
 use App\Models\Alternatif;
 use App\Models\Kriteria;
 use App\Models\KriteriaValid;
@@ -26,7 +27,7 @@ class PerhitunganSubkriteriaController extends Controller
     {
         $id = $request->query('id');
         if($id == null) {
-            return redirect('kriteria');
+            return redirect('perhitungan_subkriteria');
         }
         $is_valid = SubkriteriaValid::where('id_kriteria', $id)->first();
         $kriteria = Kriteria::where('id', $id)->firstOrFail();
@@ -118,12 +119,12 @@ class PerhitunganSubkriteriaController extends Controller
         if($cr > 0.1) {
             $valid->is_valid = false;
             $valid->save();
-            return redirect('perhitungan_subkriteria/matrix?id=' . $request->post('id_kriteria'))->with('error', 'Gagal hitung, nilai Consistensi Ratio ' . number_format($cr, 3) . ' dan Consistensi Index ' . number_format($ci, 3) . ', lebih besar dari 0,1 atau 10%.');
+            return redirect('/perhitungan_subkriteria/hasil?id=' . $request->post('id_kriteria'))->with('error', 'Gagal hitung, nilai Consistensi Ratio ' . number_format($cr, 3) . ' dan Consistensi Index ' . number_format($ci, 3) . ', lebih besar dari 0,1 atau 10%.');
         }
 
         $valid->is_valid = true;
         $valid->save();
-        return redirect('perhitungan_subkriteria/matrix?id=' . $request->post('id_kriteria'))->with('success', 'Berhasil hitung, nilai Consistensi Ratio ' . number_format($cr, 3) . ' dan Consistensi Index ' . number_format($ci, 3) . ', lebih kecil dari 0,1 atau 10%.');
+        return redirect('/perhitungan_subkriteria/hasil?id=' . $request->post('id_kriteria'))->with('success', 'Berhasil hitung, nilai Consistensi Ratio ' . number_format($cr, 3) . ' dan Consistensi Index ' . number_format($ci, 3) . ', lebih kecil dari 0,1 atau 10%.');
     }
 
     public function alternatif() {
@@ -132,12 +133,31 @@ class PerhitunganSubkriteriaController extends Controller
         $nilai_prioritas_subkriterias = NilaiPrioritasSubkriteria::get();
         $perhitungans_all = Perhitungan::get();
         $is_valid = KriteriaValid::first();
+        $is_subkriteria_valid = SubkriteriaValid::where('is_valid' , false)->first();
         return view('pages.perhitungan_subkriteria.alternatif', [
             'kriterias' => $kriterias, 
             'alternatifs' => $alternatifs,
             'nilai_prioritas_subkriterias' => $nilai_prioritas_subkriterias,
             'perhitungans_all' => $perhitungans_all,
-            'is_valid' => $is_valid
+            'is_valid' => $is_valid,
+            'is_subkriteria_valid' => $is_subkriteria_valid ? false : true
+        ]);
+    }
+
+    public function hasil(Request $request) {
+        $id = $request->query('id');
+        if($id == null) {
+            return redirect('perhitungan_subkriteria');
+        }
+        $is_valid = SubkriteriaValid::where('id_kriteria', $id)->first();
+        $kriteria = Kriteria::where('id', $id)->firstOrFail();
+        $nilai_index_random = (Formula::$nilai_index_random[count($kriteria->subkriterias)]);
+        $perhitungans_all = PerhitunganSubkriteria::where('id_kriteria', $id)->get();
+        return view('pages.perhitungan_subkriteria/hasil',  [
+            'kriteria' => $kriteria, 
+            'is_valid' => $is_valid, 
+            'perhitungans_all' => $perhitungans_all,
+            'nilai_index_random' => $nilai_index_random
         ]);
     }
 }
