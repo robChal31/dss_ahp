@@ -96,7 +96,7 @@ class PerhitunganController extends Controller
         $nilai_index_random = Formula::$nilai_index_random;
 
         $ci = ($maks_lamda - count($kriterias)) / (count($kriterias)-1);
-        $cr = $ci/($nilai_index_random[count($kriterias)]);
+        $cr = count($kriterias) > 2 ? $ci/($nilai_index_random[count($kriterias)]) : $ci;
         $valid = KriteriaValid::first();
         if(!$valid) {
             $valid = new KriteriaValid();

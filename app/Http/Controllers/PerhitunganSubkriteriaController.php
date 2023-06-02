@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\helpers\Formula;
 use App\Models\Alternatif;
+use App\Models\AlternatifDetail;
 use App\Models\Kriteria;
 use App\Models\KriteriaValid;
 use App\Models\MatrixNilaiSubkriteria;
@@ -110,7 +111,7 @@ class PerhitunganSubkriteriaController extends Controller
             "15" => 1.59,
         ];
         $ci = ($maks_lamda - count($subkriterias)) / (count($subkriterias)-1);
-        $cr = $ci/($nilai_index_random[count($subkriterias)]);
+        $cr = count($subkriterias) > 2 ? $ci/($nilai_index_random[count($subkriterias)]) : $ci;
         $valid = SubkriteriaValid::where('id_kriteria', $request->post('id_kriteria'))->first();
         if(!$valid) {
             $valid = new SubkriteriaValid();
@@ -134,13 +135,30 @@ class PerhitunganSubkriteriaController extends Controller
         $perhitungans_all = Perhitungan::get();
         $is_valid = KriteriaValid::first();
         $is_subkriteria_valid = SubkriteriaValid::where('is_valid' , false)->first();
+        $error_alternatif = false;
+        $error_sub = false;
+        $sub_valid = SubkriteriaValid::get();
+        if(count($sub_valid) != count($kriterias)) {
+            $error_sub = true;
+        }
+        
+        foreach($alternatifs as $alt) {
+            $count_alt_det = AlternatifDetail::where('id_alternatif', $alt->id)->get();
+            if(count($count_alt_det) != count($kriterias)) {
+                $error_alternatif = true;
+                break;
+            }
+        }
+        
         return view('pages.perhitungan_subkriteria.alternatif', [
             'kriterias' => $kriterias, 
             'alternatifs' => $alternatifs,
             'nilai_prioritas_subkriterias' => $nilai_prioritas_subkriterias,
             'perhitungans_all' => $perhitungans_all,
             'is_valid' => $is_valid,
-            'is_subkriteria_valid' => $is_subkriteria_valid ? false : true
+            'is_subkriteria_valid' => $is_subkriteria_valid ? false : true,
+            'error_sub' => $error_sub,
+            'error_alternatif' => $error_alternatif,
         ]);
     }
 
@@ -152,6 +170,7 @@ class PerhitunganSubkriteriaController extends Controller
         $is_valid = SubkriteriaValid::where('id_kriteria', $id)->first();
         $kriteria = Kriteria::where('id', $id)->firstOrFail();
         $nilai_index_random = (Formula::$nilai_index_random[count($kriteria->subkriterias)]);
+        $nilai_index_random = $nilai_index_random > 0 ? $nilai_index_random : 1;
         $perhitungans_all = PerhitunganSubkriteria::where('id_kriteria', $id)->get();
         return view('pages.perhitungan_subkriteria/hasil',  [
             'kriteria' => $kriteria, 

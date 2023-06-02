@@ -3,18 +3,18 @@
 
     <div class="row" id="hasil_container">
         <div class="card col-12 p-4">
+            <div class="mb-2">
+                @if ((count($kriteria->subkriterias) * count($kriteria->subkriterias)) == count($perhitungans_all))
+                    @if (($is_valid) && $is_valid->is_valid)
+                        <p class="alert alert-success text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index valid</p>
+                    @endif
+                    
+                    @if (($is_valid) && !$is_valid->is_valid)
+                        <p class="alert alert-danger text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index tidak valid, silahkan input kembali</p>
+                    @endif
+                @endif
+            </div>
             <h4 class="mb-4">Matrix Perbandingan Berpasangan</h4>
-
-            @if ((count($kriteria->subkriterias) * count($kriteria->subkriterias)) == count($perhitungans_all))
-                @if (($is_valid) && $is_valid->is_valid)
-                    <p class="alert alert-success text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index valid</p>
-                @endif
-                
-                @if (($is_valid) && !$is_valid->is_valid)
-                    <p class="alert alert-danger text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index tidak valid, silahkan input kembali</p>
-                @endif
-            @endif
-
             @if (count($kriteria->subkriterias))
                 <form method="post" action="/perhitungan_subkriteria/store">
                     @csrf
@@ -113,7 +113,7 @@
                             @foreach ($kriteria->subkriterias as $innerIndex2 => $subkriteria3)
                                 <td class="border">
                                     @if (count($subkriteria4->perhitungansubkriterias))
-                                        @if ($subkriteria4->perhitungansubkriterias[$innerIndex2])
+                                        @if (ISSET($subkriteria4->perhitungansubkriterias[$innerIndex2]))
                                         <?php 
                                             $jml_nilai += $subkriteria4->perhitungansubkriterias[$innerIndex2]->nilai / $total_nilai_prioritas[$innerIndex2];
                                             $nilai_p_kriteria = $subkriteria4->perhitungansubkriterias[$innerIndex2]->nilai / $total_nilai_prioritas[$innerIndex2];

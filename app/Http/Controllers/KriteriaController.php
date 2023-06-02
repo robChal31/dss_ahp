@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kriteria;
+use App\Models\Perhitungan;
 use Illuminate\Http\Request;
 
 class KriteriaController extends Controller
@@ -71,8 +72,12 @@ class KriteriaController extends Controller
     public function destroy(Request $request)
     {
         $id = $request->input('id_kriteria');
-        $subkriteria = Kriteria::where('id', $id)->first();
-        $subkriteria->delete();
+        $kriteria = Kriteria::where('id', $id)->first();
+        $kriteria->delete();
+        $perhitungan = Perhitungan::where('id_kriteria', $id)->first();
+        if($perhitungan) {
+            $perhitungan->delete();
+        }
         return redirect('kriteria')->with('success', 'Berhasil menghapus kriteria');
     }
 }

@@ -2,7 +2,7 @@
 
     @slot('content')
         <div class="container-fluid py-2">
-            @if ((count($kriterias) * count($kriterias)) == count($perhitungans_all))
+            @if ((count($kriterias) * count($kriterias)) == count($perhitungans_all) && (!$error_alternatif && !$error_sub) && $is_subkriteria_valid)
                 {{-- nilai alternatif  --}}
                 <div class="row">
                     <div class="card col-12 p-4">
@@ -94,7 +94,7 @@
                                                 $nilai_prioritas_subkriteria = $nilai_prioritas_subkriterias->where('id_subkriteria', $id_subkriteria)->first();
                                             ?> 
                                                 <td>
-                                                    {{number_format($nilai_prioritas_subkriteria->nilai_prioritas * $nilai_prioritas_kriteria, 2)}}
+                                                    {{number_format($nilai_prioritas_subkriteria->nilai_prioritas * $nilai_prioritas_kriteria, 3)}}
                                                 </td>
                                                 <?php 
                                                     $total += $nilai_prioritas_subkriteria->nilai_prioritas * $nilai_prioritas_kriteria;
@@ -119,14 +119,22 @@
                             });
                         ?>
                         <div class="col-12 mt-4">
-                            <h5 class="fw-bold text-center text-primary">Ranking 1 adalah {{$rank[0][0]['alternatif_nama']}} dengan total nilai {{number_format($rank[0][0]['total'], 2)}}</h5>
+                            <h5 class="fw-bold text-center text-primary">Ranking 1 adalah {{$rank[0][0]['alternatif_nama']}} dengan total nilai {{number_format($rank[0][0]['total'], 3)}}</h5>
                         </div>
                     </div>
                 </div>
         
             @else
             <div class="card col-12 p-4">
-                <p class="alert alert-danger text-white py-2 w-30 text-center" style="font-size: 12px">Harap mengisi nilai prioritas kriteria dan subkriteria terlebih dahulu</p>
+                @if ((count($kriterias) * count($kriterias)) !== count($perhitungans_all) || $error_sub)
+                    <p class="alert alert-danger text-white py-2 w-30 text-center" style="font-size: 12px">Harap mengisi nilai prioritas kriteria dan subkriteria terlebih dahulu</p>
+                @endif
+                @if ($error_alternatif)
+                <p class="alert alert-danger text-white py-2 w-30 text-center" style="font-size: 12px">Harap mengisi nilai siswa</p>
+                @endif
+                @if (!$is_subkriteria_valid)
+                    <span class="alert alert-danger text-white py-2" style="font-size: 11px">Nilai Consistensi Ratio dan Consistensi Index subkriteria tidak valid, silahkan input kembali</span>
+                @endif
             </div>
             @endif
         </div>

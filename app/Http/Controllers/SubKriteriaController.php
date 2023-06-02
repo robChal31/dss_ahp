@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MatrixNilaiSubkriteria;
+use App\Models\NilaiPrioritasSubkriteria;
+use App\Models\PerhitunganSubkriteria;
 use App\Models\SubKriteria;
+use App\Models\SubkriteriaValid;
 use Illuminate\Http\Request;
 
 class SubKriteriaController extends Controller
@@ -37,7 +41,11 @@ class SubKriteriaController extends Controller
         $subkriteriaModel = new SubKriteria();
         $subkriteriaModel->nama_subkriteria = $request->nama_subkriteria;
         $subkriteriaModel->id_kriteria = $request->id_kriteria;
-
+        $unValid = SubkriteriaValid::where('id_kriteria', $request->id_kriteria)->first();
+        if($unValid) {
+            $unValid->is_valid = false;
+            $unValid->save();
+        }
         $subkriteriaModel->save();
         return redirect('/subkriteria?id=' . $request->id_kriteria)->with('success', 'Berhasil menambahkan subkriteria');
     }
@@ -80,6 +88,9 @@ class SubKriteriaController extends Controller
         $subkriteria = Subkriteria::where('id', $id)->first();
         $id_kriteria = $subkriteria->id_kriteria;
         $subkriteria->delete();
+        MatrixNilaiSubkriteria::where('id_kriteria', $id_kriteria)->delete();
+        PerhitunganSubkriteria::where('id_kriteria', $id_kriteria)->delete();
+        NilaiPrioritasSubkriteria::where('id_kriteria', $id_kriteria)->delete();
         return redirect('/subkriteria?id=' . $id_kriteria)->with('success', 'Berhasil menghapus subkriteria');
     }
 }

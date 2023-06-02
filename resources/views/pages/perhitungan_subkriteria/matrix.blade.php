@@ -5,13 +5,16 @@
             <div class="row" id="hasil_container">
             
                 <div class="card col-12 p-4">
-                    <h4 class="mb-4">Matrix Perbandingan Subkriteria</h4>
+                    <div class="mb-2">
                         @if (($is_valid) && $is_valid->is_valid)
                             <p class="alert alert-success text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index valid</p>
                         @endif
                         @if (($is_valid) && !$is_valid->is_valid)
-                        <p class="alert alert-danger text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index tidak valid, silahkan input kembali</p>
+                            <p class="alert alert-danger text-white py-2 w-30 text-center" style="font-size: 12px">Nilai Consistensi Ratio dan Consistensi Index tidak valid, silahkan input kembali</p>
                         @endif
+                    </div>
+                    <h4 class="mb-4">Matrix Perbandingan Subkriteria</h4>
+                       
                     <form method="post" action="/perhitungan_subkriteria/store">
                         @csrf
                         @method('POST')
@@ -32,7 +35,7 @@
                                     <td>
                                         <select name="{{$subkriterias2->nama_subkriteria . '[]'}}" class="form-select px-4 matrix_select" style="padding: 5px 20px" {{$innerIndex == $outerIndex ? 'disabled' : ''}} data-id="{{$innerIndex . ',' . $outerIndex}}">
                                             @if (count($subkriterias2->perhitungansubkriterias))
-                                                @if ($subkriterias2->perhitungansubkriterias[$innerIndex])
+                                                @if (ISSET($subkriterias2->perhitungansubkriterias[$innerIndex]))
                                                     <option value="{{$subkriterias2->perhitungansubkriterias[$innerIndex]->nilai}}" data-dynamic="true">{{number_format($subkriterias2->perhitungansubkriterias[$innerIndex]->nilai, 2)}}</option>
                                                 @endif
                                             @endif
